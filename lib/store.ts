@@ -65,6 +65,10 @@ async function readLocalJobs(): Promise<Job[]> {
   return validateJobs(JSON.parse(raw));
 }
 
+// Blob returns a weak etag (W/"...") for larger or compressed files, but ifMatch only
+// accepts a strong one. The opaque value is the same, so drop the weak prefix.
+export const strongEtag = (etag: string): string => etag.replace(/^W\//, '');
+
 async function readBlobSnapshot(): Promise<{ jobs: Job[]; etag: string }> {
   const result = await get(blobPath, {
     access: 'private',
@@ -82,7 +86,7 @@ async function readBlobSnapshot(): Promise<{ jobs: Job[]; etag: string }> {
   }
 
   const raw = await new Response(result.stream).text();
-  return { jobs: validateJobs(JSON.parse(raw)), etag: result.blob.etag };
+  return { jobs: validateJobs(JSON.parse(raw)), etag: strongEtag(result.blob.etag) };
 }
 
 export async function readJobs(): Promise<Job[]> {
@@ -181,7 +185,7 @@ export async function updateDoc<T>(
         throw new Error(`Could not retrieve ${name} storage.`);
       }
       current = JSON.parse(await new Response(result.stream).text());
-      etag = result.blob.etag;
+      etag = strongEtag(result.blob.etag);
     }
     const next = mutate(current);
 
