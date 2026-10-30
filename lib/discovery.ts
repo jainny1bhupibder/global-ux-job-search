@@ -1,5 +1,7 @@
 import { updateJobs, type Job } from './store';
 import { classify } from './matching';
+import { buildDraft } from './drafts';
+import { profile } from './profile';
 import { greenhouse, lever, ashby, mapGreenhouse, mapLever, mapAshby } from './boards';
 
 const relevant = /\b(ux designer|ui designer|ui\/ux designer|ux\/ui designer|ui ux designer|product designer|senior product designer|lead product designer|staff product designer|principal product designer|product design lead|product design director|director of product design|ux researcher|user researcher|design researcher|interaction designer|service designer|design systems designer|experience designer|ux lead|design lead|head of design|director of design|design manager|product design manager|design strategist|usability researcher)\b/i;
@@ -166,7 +168,11 @@ export async function runDiscovery(): Promise<DiscoveryResult> {
   let fresh: Job[] = [];
   const merged = await updateJobs(current => {
     const existing = new Set(current.flatMap(j => [j.id, dupKey(j)]));
-    fresh = unique.filter(j => !existing.has(j.id) && !existing.has(dupKey(j)));
+    // Recommended roles get a tailored draft straight away so they are ready to review and send.
+    fresh = unique.filter(j => !existing.has(j.id) && !existing.has(dupKey(j))).map(j => {
+      const c = classify(j);
+      return c.recommended ? { ...j, draft: buildDraft(j, c, profile).draft, status: 'Draft ready for review', updatedAt: now } : j;
+    });
     return fresh.length ? [...fresh, ...current] : current;
   });
 

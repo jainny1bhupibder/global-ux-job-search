@@ -42,6 +42,7 @@ export function buildDraft(job: Job, c: Classification, p: Profile): DraftResult
     eligibilityLine,
     '',
     `Portfolio: ${p.portfolioUrl || '[add portfolio link]'}`,
+    ...(p.cvUrl ? [`CV: ${p.cvUrl}`] : []),
     '',
     'Thank you for considering my application.',
     '',

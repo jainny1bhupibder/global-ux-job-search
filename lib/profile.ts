@@ -14,6 +14,8 @@ export type Profile = {
   yearsExperience: number;
   email: string;
   portfolioUrl: string | null;
+  // Public link to the CV (PDF). Null until the owner provides one; drafts then omit the line.
+  cvUrl: string | null;
   targetRoles: string[];
   skills: Skill[];
   projects: ProjectRef[];
@@ -29,6 +31,7 @@ export const profile: Profile = {
   yearsExperience: 12,
   email: 'bhupinder3kumar@gmail.com',
   portfolioUrl: 'https://bhupinder-portfolio-inky.vercel.app/',
+  cvUrl: null,
   targetRoles: ['UX/UI Designer', 'Product Designer', 'Senior Product Designer', 'Lead Product Designer'],
   skills: [
     { label: 'UX design & research', keywords: ['ux research', 'user research', 'usability', 'ux design', 'user experience', 'research'], evidence: 'Portfolio strength: UX DESIGN & RESEARCH' },
