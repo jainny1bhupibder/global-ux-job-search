@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "node --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.2",
     "next": "15.5.28",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
